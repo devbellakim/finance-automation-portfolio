@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Custom base ─────────────────────────────────────────────── */
+@layer base {
+  :root {
+    --font-inter: 'Inter', sans-serif;
+    --font-jetbrains: 'JetBrains Mono', monospace;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #0A0A0F;
+  }
+
+  body {
+    background-color: #0A0A0F;
+    color: #f3f4f6;
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: rgba(0, 212, 255, 0.25);
+    color: #ffffff;
+  }
+
+  ::-webkit-scrollbar         { width: 6px; }
+  ::-webkit-scrollbar-track   { background: #0A0A0F; }
+  ::-webkit-scrollbar-thumb   { background: rgba(0, 212, 255, 0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0, 212, 255, 0.6); }
+}
+
+/* ── Utility layer ───────────────────────────────────────────── */
+@layer utilities {
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .glass-cyan {
+    background: rgba(0, 212, 255, 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+  }
+
+  /* Animated grid background */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(0, 212, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.035) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 25s linear infinite;
+  }
+
+  /* Glow text */
+  .text-glow-cyan {
+    text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+  }
+  .text-glow-purple {
+    text-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #00D4FF 0%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Gradient border */
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(0,212,255,0.4), rgba(124,58,237,0.4));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Section spacing */
+  .section-padding {
+    @apply px-6 py-24 md:px-16 lg:px-24;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium;
+  }
+  .badge-cyan   { @apply badge bg-cyan-400/10 text-cyan-400 border border-cyan-400/20; }
+  .badge-purple { @apply badge bg-purple-500/10 text-purple-400 border border-purple-500/20; }
+  .badge-amber  { @apply badge bg-amber-400/10 text-amber-400 border border-amber-400/20; }
+  .badge-green  { @apply badge bg-emerald-400/10 text-emerald-400 border border-emerald-400/20; }
+  .badge-gray   { @apply badge bg-gray-500/10 text-gray-400 border border-gray-500/20; }
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm
+           bg-cyan-400 text-[#0A0A0F] transition-all duration-200
+           hover:bg-cyan-300 hover:shadow-cyan-sm hover:-translate-y-0.5;
+  }
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm
+           glass text-gray-200 border border-white/10 transition-all duration-200
+           hover:border-cyan-400/40 hover:text-cyan-400 hover:-translate-y-0.5;
+  }
+}
+
+/* ── Keyframes ───────────────────────────────────────────────── */
+@keyframes gridDrift {
+  0%   { background-position: 0px 0px; }
+  100% { background-position: 60px 60px; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-18px); }
+}
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
