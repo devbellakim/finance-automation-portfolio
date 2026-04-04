@@ -29,6 +29,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Project 1
+project1-sap-report/src/__pycache__/
+project1-sap-report/output/
+
 # Claude Code
 .claude/
 
