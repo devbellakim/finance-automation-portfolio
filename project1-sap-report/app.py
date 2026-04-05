@@ -420,12 +420,36 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
+    # ── Reporting Period ──────────────────────────────────────────────────
     st.markdown("<div class='sidebar-section'>Reporting Period</div>", unsafe_allow_html=True)
     quarter     = st.selectbox("Quarter",     QUARTERS,     index=2)
     fiscal_year = st.selectbox("Fiscal Year", FISCAL_YEARS, index=2)
 
-    prior_q, prior_fy = get_prior_period(quarter, fiscal_year)
+    # ── Comparison Period ─────────────────────────────────────────────────
+    st.markdown("<div class='sidebar-section'>Comparison Period</div>", unsafe_allow_html=True)
+    comp_mode = st.radio(
+        "comp_mode",
+        options=[
+            "📉  Prior quarter (Q-1, same FY)",
+            "📆  Same quarter, prior year",
+            "✏️  Specify manually",
+        ],
+        label_visibility="collapsed",
+    )
 
+    if comp_mode == "📉  Prior quarter (Q-1, same FY)":
+        prior_q, prior_fy = get_prior_period(quarter, fiscal_year)
+    elif comp_mode == "📆  Same quarter, prior year":
+        prior_q  = quarter
+        prior_fy = f"FY{int(fiscal_year[2:]) - 1}"
+    else:
+        col_pq, col_pfy = st.columns(2)
+        with col_pq:
+            prior_q  = st.selectbox("Prior Qtr", QUARTERS,     index=1, key="prior_q_sel")
+        with col_pfy:
+            prior_fy = st.selectbox("Prior FY",  FISCAL_YEARS, index=1, key="prior_fy_sel")
+
+    # ── Resolved period chip ──────────────────────────────────────────────
     st.markdown(
         f"<div class='period-chip'>"
         f"<b>Current:</b> {quarter} {fiscal_year}<br>"
