@@ -9,6 +9,7 @@ import io
 import numpy as np
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
@@ -256,101 +257,12 @@ label, p, span {{ color: var(--text); }}
 st.markdown(build_css(T), unsafe_allow_html=True)
 
 
-# ── SVG data-transform diagram ───────────────────────────────────────────────
-def build_svg(T: dict) -> str:
-    bg  = T["bg"];      sur = T["surface"]
-    brd = T["border"];  acc = T["accent"]
-    txt = T["text"];    mut = T["muted"]
-    parts = [
-        '<div style="margin:16px 0 24px 0;">',
-        '<svg viewBox="0 0 860 200" xmlns="http://www.w3.org/2000/svg"',
-        f' style="width:100%;max-width:860px;border-radius:14px;display:block;">',
-        '<defs>',
-        f'<marker id="arr" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">',
-        f'<polygon points="0 0, 8 3, 0 6" fill="{acc}"/>',
-        '</marker>',
-        '</defs>',
-        # canvas background
-        f'<rect width="860" height="200" rx="14" fill="{bg}"/>',
+# ── Data-transform diagram ────────────────────────────────────────────────────
+_DIAGRAM_PATH = "assets/sap_data_transform_diagram.html"
 
-        # ── left: sap_export.xlsx ──────────────────────────────────────────
-        f'<rect x="10" y="10" width="218" height="84" rx="8" fill="{sur}" stroke="{brd}" stroke-width="1"/>',
-        f'<rect x="10" y="10" width="218" height="22" rx="8" fill="{acc}"/>',
-        f'<rect x="10" y="24"  width="218" height="8"  fill="{acc}"/>',
-        f'<text x="119" y="26" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="700" fill="{bg}">sap_export.xlsx</text>',
-        f'<rect x="10" y="32" width="218" height="16" fill="{brd}" fill-opacity="0.45"/>',
-        f'<text x="80"  y="44" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">GL_Account</text>',
-        f'<text x="185" y="44" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">Amount</text>',
-        f'<line x1="10" y1="48" x2="228" y2="48" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="80"  y="59" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">100000</text>',
-        f'<text x="185" y="59" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">15,000.00</text>',
-        f'<line x1="10" y1="63" x2="228" y2="63" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="80"  y="74" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">200000</text>',
-        f'<text x="185" y="74" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">-4,200.50</text>',
-        f'<text x="119" y="87" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">. . .</text>',
-
-        # ── left: SAP_CoA.xlsx ─────────────────────────────────────────────
-        f'<rect x="10" y="106" width="218" height="82" rx="8" fill="{sur}" stroke="{brd}" stroke-width="1"/>',
-        f'<rect x="10" y="106" width="218" height="22" rx="8" fill="{acc}"/>',
-        f'<rect x="10" y="120" width="218" height="8"  fill="{acc}"/>',
-        f'<text x="119" y="122" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="700" fill="{bg}">SAP_CoA.xlsx</text>',
-        f'<rect x="10" y="128" width="218" height="16" fill="{brd}" fill-opacity="0.45"/>',
-        f'<text x="80"  y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">GL_Account</text>',
-        f'<text x="185" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">Hierarchy</text>',
-        f'<line x1="10" y1="144" x2="228" y2="144" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="80"  y="155" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">100000</text>',
-        f'<text x="185" y="155" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">1 - Revenue</text>',
-        f'<line x1="10" y1="159" x2="228" y2="159" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="80"  y="170" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">200000</text>',
-        f'<text x="185" y="170" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">2 - COGS</text>',
-        f'<text x="119" y="183" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">. . .</text>',
-        f'<text x="119" y="198" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="{mut}">Input Files (2)</text>',
-
-        # ── arrows: inputs to center box ───────────────────────────────────
-        f'<path d="M230,52  C255,52  258,100 278,100" stroke="{acc}" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>',
-        f'<path d="M230,147 C255,147 258,110 278,110" stroke="{acc}" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>',
-
-        # ── center: automation box ─────────────────────────────────────────
-        f'<rect x="282" y="74" width="196" height="57" rx="10" fill="{sur}" stroke="{acc}" stroke-width="1.5"/>',
-        f'<text x="380" y="99"  text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="{acc}">Python + pandas</text>',
-        f'<text x="380" y="116" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9"  fill="{mut}">SAP GL Automation</text>',
-
-        # ── arrow: center to output ────────────────────────────────────────
-        f'<path d="M480,102 L528,102" stroke="{acc}" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>',
-
-        # ── right: output table ────────────────────────────────────────────
-        f'<rect x="533" y="10" width="317" height="180" rx="8" fill="{sur}" stroke="{brd}" stroke-width="1"/>',
-        f'<rect x="533" y="10"  width="317" height="22" rx="8" fill="{acc}"/>',
-        f'<rect x="533" y="24"  width="317" height="8"  fill="{acc}"/>',
-        f'<text x="691" y="26" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="700" fill="{bg}">Processed_JE_Summary.xlsx</text>',
-        f'<rect x="533" y="32" width="317" height="16" fill="{brd}" fill-opacity="0.45"/>',
-        f'<text x="635" y="44" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">Category</text>',
-        f'<text x="800" y="44" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">Amount</text>',
-        # [new] badge — ASCII only, no special chars
-        f'<rect x="666" y="34" width="32" height="11" rx="4" fill="{acc}" fill-opacity="0.35"/>',
-        f'<text x="682" y="43" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7" font-weight="700" fill="{acc}">[new]</text>',
-        f'<line x1="533" y1="48" x2="850" y2="48" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="635" y="60" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">Revenue</text>',
-        f'<text x="800" y="60" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">15,000.00</text>',
-        f'<line x1="533" y1="64" x2="850" y2="64" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="635" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">COGS</text>',
-        f'<text x="800" y="76" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">-4,200.50</text>',
-        f'<line x1="533" y1="80" x2="850" y2="80" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="635" y="92" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">OpEx</text>',
-        f'<text x="800" y="92" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">8,750.25</text>',
-        f'<line x1="533" y1="96" x2="850" y2="96" stroke="{brd}" stroke-width="0.5"/>',
-        f'<text x="691" y="110" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="{mut}">. . .</text>',
-        # total row
-        f'<rect x="533" y="150" width="317" height="22" fill="{brd}" fill-opacity="0.25"/>',
-        f'<rect x="533" y="168" width="317" height="3"  fill="{acc}" fill-opacity="0.4"/>',
-        f'<text x="635" y="165" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">Total</text>',
-        f'<text x="800" y="165" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="{txt}">19,549.75</text>',
-        f'<text x="691" y="198" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="{mut}">Output - Summary Pivot</text>',
-
-        '</svg>',
-        '</div>',
-    ]
-    return ''.join(parts)
+def render_diagram() -> None:
+    with open(_DIAGRAM_PATH, "r", encoding="utf-8") as f:
+        components.html(f.read(), height=420, scrolling=False)
 
 
 # ── Excel formatting helpers ──────────────────────────────────────────────────
@@ -576,9 +488,9 @@ with tab1:
         unsafe_allow_html=True,
     )
 
-    # SVG data-transform illustration
+    # Data-transform diagram
     st.markdown("<div class='section-title'>Data Transform Pipeline</div>", unsafe_allow_html=True)
-    st.markdown(build_svg(T), unsafe_allow_html=True)
+    render_diagram()
 
     # Input / Output specs
     col_in, col_out = st.columns(2)
