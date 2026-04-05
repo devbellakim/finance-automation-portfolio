@@ -258,7 +258,8 @@ st.markdown(build_css(T), unsafe_allow_html=True)
 
 
 # ── Data-transform diagram ────────────────────────────────────────────────────
-_DIAGRAM_PATH = "assets/sap_data_transform_diagram.html"
+from pathlib import Path
+_DIAGRAM_PATH = Path(__file__).parent / "assets" / "sap_data_transform_diagram.html"
 
 def render_diagram() -> None:
     with open(_DIAGRAM_PATH, "r", encoding="utf-8") as f:
