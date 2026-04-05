@@ -262,7 +262,7 @@ _DIAGRAM_PATH = "assets/sap_data_transform_diagram.html"
 
 def render_diagram() -> None:
     with open(_DIAGRAM_PATH, "r", encoding="utf-8") as f:
-        components.html(f.read(), height=420, scrolling=False)
+        components.html(f.read(), height=640, scrolling=False)
 
 
 # ── Excel formatting helpers ──────────────────────────────────────────────────
